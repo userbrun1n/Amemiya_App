@@ -1,0 +1,44 @@
+package com.example.amemiyaapp.ui.screens
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun SupportScreen(onBack: () -> Unit = {}) {
+    var message by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ) {
+        TextButton(onClick = onBack) {
+            Text("← Voltar")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text("Suporte", style = MaterialTheme.typography.headlineMedium)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = message,
+            onValueChange = { message = it },
+            label = { Text("Digite sua mensagem") },
+            modifier = Modifier.fillMaxWidth().height(150.dp)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = { /* futuramente: enviar mensagem */ },
+            enabled = message.isNotBlank(),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Enviar")
+        }
+    }
+}

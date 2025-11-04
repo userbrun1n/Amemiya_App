@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation("io.coil-kt:coil-compose:2.2.2") // Use a versão mais recente
 
     // Compose BOM
     implementation(platform(libs.androidx.compose.bom))
@@ -58,6 +59,7 @@ dependencies {
 
     // Navegação Compose (essa não vem no catálogo por padrão, então mantém manual)
     implementation("androidx.navigation:navigation-compose:2.8.1")
+    implementation(libs.androidx.compose.foundation)
 
     // Testes
     testImplementation(libs.junit)

@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun SignUpScreen(
     onLoginClick: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+
 ) {
     var email by remember { mutableStateOf("") }
     var number by remember { mutableStateOf("") }

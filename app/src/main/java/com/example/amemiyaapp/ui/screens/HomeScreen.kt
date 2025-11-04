@@ -31,6 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.Image // Necessário para usar o componente Image
+import androidx.compose.ui.res.painterResource // ESSENCIAL: Resolve a referência à função painterResource
+import com.example.amemiyaapp.R // Necessário para acessar R.drawable.xxx
+import androidx.compose.ui.graphics.painter.Painter
+import com.example.amemiyaapp.navigation.Routes
 
 @Composable
 fun HomeScreen(
@@ -41,8 +46,16 @@ fun HomeScreen(
     onBack: () -> Unit,
     onProfileClick: () -> Unit,
     onNotificationClick: () -> Unit,
+    onArticleClick: (route: String) -> Unit,
+    // NOVOS PARÂMETROS DA BOTTOM BAR:
+    onRecordsClick: () -> Unit, // Para "Registros"
+    onProfileNavClick: () -> Unit, // Para "Perfil" na nav bar
+    onSupportNavClick: () -> Unit // Para "Ajuda" na nav bar
 ) {
     var searchText by remember { mutableStateOf("") }
+
+    // VARIÁVEL DA FOTO DE PERFIL ADICIONADA AQUI
+    val profilePhotoRes = R.drawable.motorista2 // REQUER: um arquivo profile_placeholder no res/drawable
 
     val bottomItems = listOf("Início", "Resgistros", "Perfil", "Ajuda")
     var selectedBottomItem by remember { mutableStateOf("Início") }
@@ -58,7 +71,15 @@ fun HomeScreen(
                     val isSelected = selectedBottomItem == item
                     NavigationBarItem(
                         selected = isSelected,
-                        onClick = { selectedBottomItem = item },
+                        onClick = { selectedBottomItem = item
+                            // EXECUTA A NAVEGAÇÃO
+                            when (item) {
+                                "Início" -> { /* Não faz nada, já está em Home */ }
+                                "Resgistros" -> onRecordsClick() // Chama a função passada pelo NavHost
+                                "Perfil" -> onProfileNavClick()
+                                "Ajuda" -> onSupportNavClick()
+                            }
+                        },
                         icon = {
                             Icon(
                                 imageVector = when (item) {
@@ -120,7 +141,7 @@ fun HomeScreen(
                             Badge(
                                 containerColor = Color(0xFF66C8FF),
                                 contentColor = Color.Black
-                            ) { Text("20", fontSize = 8.sp) }
+                            ) { Text("2", fontSize = 8.sp) }
                         },
                         modifier = Modifier.clickable(onClick = onNotificationClick)
                     ) {
@@ -129,15 +150,14 @@ fun HomeScreen(
 
                     Icon(Icons.Filled.QuestionMark, contentDescription = "Ajuda", tint = Color.Black, modifier = Modifier.size(24.dp).padding(horizontal = 12.dp))
 
-                    // Ícone de Perfil (Avatar)
-                    Icon(
-                        Icons.Filled.Person,
+                    // Ícone de Perfil (Avatar) - SUBSTITUÍDO PELA IMAGEM DE PERFIL
+                    Image(
+                        painter = painterResource(id = profilePhotoRes),
                         contentDescription = "Perfil",
-                        tint = Color.White,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .size(32.dp)
-                            .clip(RoundedCornerShape(50))
-                            .background(Color.Black)
+                            .clip(androidx.compose.foundation.shape.CircleShape) // Usando CircleShape
                             .clickable(onClick = onProfileClick)
                     )
                 }
@@ -232,19 +252,25 @@ fun HomeScreen(
                 item {
                     InfoCard(
                         title = "Como registrar a nota de abastecimento?",
-                        subtitle = "Saiba mais sobre o processo"
+                        subtitle = "Saiba mais sobre o processo",
+                        imagePainter = painterResource(id = R.drawable.abastecimento),
+                        onClick = { onArticleClick(Routes.ArticleAbastecimento)}
                     )
                 }
                 item {
                     InfoCard(
                         title = "Quando realizar as manutenções?",
-                        subtitle = "Guia para esclarecer dúvidas"
+                        subtitle = "Guia para esclarecer dúvidas",
+                        imagePainter = painterResource(id = R.drawable.manutencao), // <-- AQUI!
+                        onClick = { onArticleClick(Routes.ArticleManutencao)}
                     )
                 }
                 item {
                     InfoCard(
                         title = "O que fazer caso haja erros?",
-                        subtitle = "Não se preocupe! Iremos te ajudar"
+                        subtitle = "Não se preocupe! Iremos te ajudar",
+                        imagePainter = painterResource(id = R.drawable.erro), // <-- AQUI!
+                        onClick = { onArticleClick(Routes.ArticleErros)}
                     )
                 }
             }
@@ -280,12 +306,14 @@ fun ServiceCard(
     }
 }
 
+// NO SEU HomeScreen.kt
 @Composable
 fun InfoCard(
     title: String,
     subtitle: String,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    imagePainter: androidx.compose.ui.graphics.painter.Painter? = null // ESTE É O NOVO PARÂMETRO
 ) {
     Row(
         modifier = modifier
@@ -296,14 +324,26 @@ fun InfoCard(
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Imagem Placeholder
+        // Bloco da imagem
         Box(
             modifier = Modifier
                 .size(60.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color.LightGray)
+                .background(Color.LightGray), // Fundo cinza para o caso de não ter imagem
+            contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Filled.Person, contentDescription = "Imagem", tint = Color.Gray, modifier = Modifier.align(Alignment.Center))
+            // Se um imagePainter for fornecido, use a imagem real
+            if (imagePainter != null) {
+                Image( // Use o componente Image para exibir o Painter
+                    painter = imagePainter,
+                    contentDescription = null, // Ou uma descrição mais específica
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop // Garante que a imagem preencha o espaço
+                )
+            } else {
+                // Caso contrário, use o placeholder (ícone de pessoa)
+                Icon(Icons.Filled.Person, contentDescription = "Imagem", tint = Color.Gray, modifier = Modifier.align(Alignment.Center))
+            }
         }
 
         Spacer(modifier = Modifier.width(16.dp))

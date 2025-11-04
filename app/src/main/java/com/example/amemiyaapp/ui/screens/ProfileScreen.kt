@@ -1,5 +1,6 @@
 package com.example.amemiyaapp.ui.screens
 
+import androidx.compose.foundation.Image // ADICIONADO/MANTIDO
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,6 +26,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource // ADICIONADO
+import com.example.amemiyaapp.R // ADICIONADO/MANTIDO, NECESSÁRIO PARA A FOTO
 
 // Parâmetros de navegação adaptados para a lista de opções da imagem
 @Composable
@@ -32,21 +35,24 @@ fun ProfileScreen(
     onBack: () -> Unit,
     onLogout: () -> Unit,
     onCarDetailsClick: () -> Unit,
-    onReceiptsClick: () -> Unit,
+    onHistoryClick: () -> Unit, // <--- ALTERADO: onReceiptsClick foi substituído por onHistoryClick
     onShareProfileClick: () -> Unit,
     onPersonalizationClick: () -> Unit,
     onEditProfileClick: () -> Unit // Nova ação para o ícone de lápis
 ) {
     // Dados simulados do perfil (baseados na imagem)
-    val name = "Breno"
+    val name = "Bruno Augusto"
     val role = "Consultor / SP"
     val phone = "+55 89107 - 95286"
-    val email = "fernando@gmail.com"
+    val email = "brunoaug@amemiya.com.br"
+
+    // Variável para a foto de perfil
+    val profilePhotoRes = R.drawable.motorista2 // REQUER: um arquivo profile_placeholder no res/drawable
 
     // Lista de itens do menu inferior
     val menuItems = listOf(
         ProfileMenuItem("Detalhes do Seu Carro", Icons.Filled.ShoppingCart, onCarDetailsClick),
-        ProfileMenuItem("Comprovantes / Reembolsos", Icons.Filled.Receipt, onReceiptsClick),
+        ProfileMenuItem("Comprovantes / Reembolsos", Icons.Filled.Receipt, onHistoryClick), // <--- ALTERADO: Chamando onHistoryClick
         ProfileMenuItem("Compartilhar Perfil", Icons.Filled.Person, onShareProfileClick),
         ProfileMenuItem("Personalização", Icons.Filled.Settings, onPersonalizationClick),
         ProfileMenuItem("Logout", Icons.Filled.ExitToApp, onLogout, isLogout = true)
@@ -74,7 +80,7 @@ fun ProfileScreen(
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Personalização",
+                text = "Perfil do Funcionário",
                 color = Color.Black,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
@@ -99,19 +105,24 @@ fun ProfileScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Avatar (Círculo de Cor com Icon/Imagem)
+                    // --- AVATAR E ÍCONE DE EDIÇÃO (CORRIGIDO) ---
                     Box(
                         modifier = Modifier
                             .size(72.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF66C8FF).copy(alpha = 0.8f)) // Fundo azul claro para simular imagem
-                            .clickable(onClick = onEditProfileClick),
+                            .clickable(onClick = onEditProfileClick), // Clicar na área da foto edita
                         contentAlignment = Alignment.Center
                     ) {
-                        // Ícone para simular a imagem do usuário
-                        Icon(Icons.Filled.Person, contentDescription = "Foto de Perfil", tint = Color.White, modifier = Modifier.size(40.dp))
+                        // Imagem de Perfil
+                        Image(
+                            painter = painterResource(id = profilePhotoRes), // Usa a imagem real/placeholder
+                            contentDescription = "Foto de Perfil",
+                            modifier = Modifier
+                                .size(72.dp)
+                                .clip(CircleShape),
+                            contentScale = androidx.compose.ui.layout.ContentScale.Crop // Garante o preenchimento
+                        )
 
-                        // Ícone de lápis no canto inferior direito da imagem
+                        // Ícone de lápis no canto inferior direito
                         Icon(
                             imageVector = Icons.Filled.Edit,
                             contentDescription = "Editar Foto",
@@ -124,6 +135,7 @@ fun ProfileScreen(
                                 .padding(4.dp)
                         )
                     }
+                    // --- FIM AVATAR (CORRIGIDO) ---
 
                     Spacer(modifier = Modifier.width(16.dp))
 
@@ -142,7 +154,8 @@ fun ProfileScreen(
                         )
                     }
 
-                    // Ícone de lápis para editar nome/dados
+                    // [REMOVIDO] Ícone de lápis para editar nome/dados
+                    /*
                     IconButton(onClick = onEditProfileClick) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
@@ -151,7 +164,8 @@ fun ProfileScreen(
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                }
+                    */
+                } // FIM DO ROW
 
                 Spacer(modifier = Modifier.height(24.dp))
 

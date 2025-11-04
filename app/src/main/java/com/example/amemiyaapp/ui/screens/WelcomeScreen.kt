@@ -1,5 +1,6 @@
 package com.example.amemiyaapp.ui.screens
 
+import androidx.compose.foundation.Image // Importar para usar o componente Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +17,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource // Importar para carregar a imagem do drawable
+import com.example.amemiyaapp.R // Necessário para acessar seus recursos em res/drawable
+
 
 @Composable
 fun WelcomeScreen(onNext: () -> Unit) {
@@ -54,23 +58,18 @@ fun WelcomeScreen(onNext: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(100.dp)) // Espaçamento entre o texto e o logo
 
-                // Logo AMEMIYA (Simulação do ícone com a palavra)
+                // Logo AMEMIYA (Substituição do Box pela Imagem)
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // O ícone do logo da imagem é uma engrenagem estilizada,
-                    // aqui usaremos um círculo simples para simular a forma
-                    Box(
+                    // CÓDIGO ALTERADO PARA USAR A IMAGEM R.drawable.logo
+                    Image(
+                        painter = painterResource(id = R.drawable.logo), // <-- AGORA CARREGA SEU ARQUIVO LOGO
+                        contentDescription = "Logo Amemiya",
                         modifier = Modifier
-                            .size(24.dp) // Tamanho do ícone (engrenagem estilizada)
-                            .background(Color.Black, shape = RoundedCornerShape(percent = 50))
-                            .padding(4.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        // Não é possível colocar a engrenagem branca dentro do Box preto
-                        // com facilidade sem recursos de imagem ou um tema específico,
-                        // mas a ideia é simular o formato de ícone.
-                    }
+                            .size(24.dp), // Mantém o tamanho original do placeholder
+                        // contentScale.Fit (ou ContentScale.Crop) pode ser usado se precisar de ajuste.
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "AMEMIYA",
@@ -103,8 +102,6 @@ fun WelcomeScreen(onNext: () -> Unit) {
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
                 )
-
-
             }
         }
     }
